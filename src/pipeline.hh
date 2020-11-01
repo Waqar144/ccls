@@ -9,7 +9,7 @@
 #include <atomic>
 #include <mutex>
 #include <string>
-#include <unordered_map>
+//#include <unordered_map>
 #include <vector>
 
 namespace ccls {
@@ -24,7 +24,7 @@ struct VFS {
     int step;
     int loaded;
   };
-  std::unordered_map<std::string, State> state;
+  robin_hood::unordered_map<std::string, State> state;
   std::mutex mutex;
 
   void clear();

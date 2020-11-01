@@ -205,7 +205,7 @@ class StoreDiags : public DiagnosticConsumer {
   std::optional<Diag> last;
   std::vector<Diag> output;
   std::string path;
-  std::unordered_map<unsigned, bool> fID2concerned;
+  robin_hood::unordered_map<unsigned, bool> fID2concerned;
   void flush() {
     if (!last)
       return;

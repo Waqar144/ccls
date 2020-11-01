@@ -9,7 +9,8 @@
 #include <mutex>
 #include <optional>
 #include <string>
-#include <unordered_map>
+//#include <unordered_map>
+#include <robin_hood/robin_hood.h>
 
 namespace ccls {
 struct WorkingFile {
@@ -75,7 +76,7 @@ struct WorkingFiles {
   void onClose(const std::string &close);
 
   std::mutex mutex;
-  std::unordered_map<std::string, std::unique_ptr<WorkingFile>> files;
+  robin_hood::unordered_map<std::string, std::unique_ptr<WorkingFile>> files;
 };
 
 int getOffsetForPosition(Position pos, std::string_view content);

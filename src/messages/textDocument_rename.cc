@@ -15,8 +15,8 @@ namespace {
 WorkspaceEdit buildWorkspaceEdit(DB *db, WorkingFiles *wfiles, SymbolRef sym,
                                  std::string_view old_text,
                                  const std::string &new_text) {
-  std::unordered_map<int, std::pair<WorkingFile *, TextDocumentEdit>> path2edit;
-  std::unordered_map<int, std::unordered_set<Range>> edited;
+  robin_hood::unordered_map<int, std::pair<WorkingFile *, TextDocumentEdit>> path2edit;
+  robin_hood::unordered_map<int, robin_hood::unordered_set<Range>> edited;
 
   eachOccurrence(db, sym, true, [&](Use use) {
     int file_id = use.file_id;

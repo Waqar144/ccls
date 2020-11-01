@@ -106,7 +106,7 @@ bool expand(MessageHandler *m, Out_cclsMember *entry, bool qualified,
   if (!def)
     return false;
   entry->name = def->name(qualified);
-  std::unordered_set<Usr> seen;
+  robin_hood::unordered_set<Usr> seen;
   if (levels > 0) {
     std::vector<const QueryType *> stack;
     seen.insert(type->usr);

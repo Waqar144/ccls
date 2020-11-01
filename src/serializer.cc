@@ -10,6 +10,7 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/prettywriter.h>
+#include <robin_hood/robin_hood.h>
 
 #include <llvm/ADT/CachedHashString.h>
 #include <llvm/ADT/DenseSet.h>
@@ -144,7 +145,7 @@ void reflect(JsonReader &vis, JsonNull &v) {}
 void reflect(JsonWriter &vis, JsonNull &v) { vis.m->Null(); }
 
 template <typename V>
-void reflect(JsonReader &vis, std::unordered_map<Usr, V> &v) {
+void reflect(JsonReader &vis, robin_hood::unordered_map<Usr, V> &v) {
   vis.iterArray([&]() {
     V val;
     reflect(vis, val);
@@ -152,9 +153,15 @@ void reflect(JsonReader &vis, std::unordered_map<Usr, V> &v) {
   });
 }
 template <typename V>
-void reflect(JsonWriter &vis, std::unordered_map<Usr, V> &v) {
+void reflect(JsonWriter &vis, robin_hood::unordered_map<Usr, V> &v) {
   // Determinism
-  std::vector<std::pair<uint64_t, V>> xs(v.begin(), v.end());
+//  std::vector<robin_hood::pair<uint64_t, V>> xs(v.begin(), v.end());
+    std::vector <std::pair<uint64_t, V> > xs;
+    xs.reserve(v.size());
+    for (const auto& pair : v) {
+        xs.push_back(std::make_pair(pair.first, pair.second));
+    }
+
   std::sort(xs.begin(), xs.end(),
             [](const auto &a, const auto &b) { return a.first < b.first; });
   vis.startArray();
@@ -163,7 +170,7 @@ void reflect(JsonWriter &vis, std::unordered_map<Usr, V> &v) {
   vis.endArray();
 }
 template <typename V>
-void reflect(BinaryReader &vis, std::unordered_map<Usr, V> &v) {
+void reflect(BinaryReader &vis, robin_hood::unordered_map<Usr, V> &v) {
   for (auto n = vis.varUInt(); n; n--) {
     V val;
     reflect(vis, val);
@@ -171,7 +178,7 @@ void reflect(BinaryReader &vis, std::unordered_map<Usr, V> &v) {
   }
 }
 template <typename V>
-void reflect(BinaryWriter &vis, std::unordered_map<Usr, V> &v) {
+void reflect(BinaryWriter &vis, robin_hood::unordered_map<Usr, V> &v) {
   vis.varUInt(v.size());
   for (auto &it : v)
     reflect(vis, it.second);

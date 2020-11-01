@@ -10,6 +10,7 @@
 
 #include <rapidjson/document.h>
 #include <rapidjson/reader.h>
+#include <robin_hood/robin_hood.h>
 
 #include <algorithm>
 #include <stdexcept>
@@ -286,7 +287,7 @@ void emitSemanticHighlight(DB *db, WorkingFile *wfile, QueryFile &file) {
     return;
 
   // Group symbols together.
-  std::unordered_map<SymbolIdx, CclsSemanticHighlightSymbol> grouped_symbols;
+  robin_hood::unordered_map<SymbolIdx, CclsSemanticHighlightSymbol> grouped_symbols;
   for (auto [sym, refcnt] : file.symbol2refcnt) {
     if (refcnt <= 0)
       continue;

@@ -9,7 +9,8 @@
 #include <functional>
 #include <mutex>
 #include <string>
-#include <unordered_map>
+//#include <unordered_map>
+#include <robin_hood/robin_hood.h>
 #include <vector>
 
 namespace ccls {
@@ -32,14 +33,14 @@ struct Project {
 
   struct Folder {
     std::string name;
-    std::unordered_map<std::string, int> search_dir2kind;
+    robin_hood::unordered_map<std::string, int> search_dir2kind;
     std::vector<Entry> entries;
-    std::unordered_map<std::string, int> path2entry_index;
-    std::unordered_map<std::string, std::vector<const char *>> dot_ccls;
+    robin_hood::unordered_map<std::string, int> path2entry_index;
+    robin_hood::unordered_map<std::string, std::vector<const char *>> dot_ccls;
   };
 
   std::mutex mtx;
-  std::unordered_map<std::string, Folder> root2folder;
+  robin_hood::unordered_map<std::string, Folder> root2folder;
 
   // Loads a project for the given |directory|.
   //

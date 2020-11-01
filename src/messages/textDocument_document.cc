@@ -165,7 +165,7 @@ void MessageHandler::textDocument_documentSymbol(JsonReader &reader,
     std::sort(result.begin(), result.end());
     reply(result);
   } else if (g_config->client.hierarchicalDocumentSymbolSupport) {
-    std::unordered_map<SymbolIdx, std::unique_ptr<DocumentSymbol>> sym2ds;
+    robin_hood::unordered_map<SymbolIdx, std::unique_ptr<DocumentSymbol>> sym2ds;
     std::vector<std::pair<std::vector<const void *>, DocumentSymbol *>> funcs,
         types;
     for (auto [sym, refcnt] : file->symbol2refcnt) {

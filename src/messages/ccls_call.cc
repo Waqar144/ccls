@@ -6,7 +6,7 @@
 #include "pipeline.hh"
 #include "query.hh"
 
-#include <unordered_set>
+#include <robin_hood/robin_hood.h>
 
 namespace ccls {
 
@@ -103,7 +103,7 @@ bool expand(MessageHandler *m, Out_cclsCall *entry, bool callee,
     }
   };
 
-  std::unordered_set<Usr> seen;
+  robin_hood::unordered_set<Usr> seen;
   seen.insert(func.usr);
   std::vector<const QueryFunc *> stack;
   entry->name = def->name(qualified);

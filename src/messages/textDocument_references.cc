@@ -51,7 +51,7 @@ void MessageHandler::textDocument_references(JsonReader &reader,
 
   for (SymbolRef sym : findSymbolsAtLocation(wf, file, param.position)) {
     // Found symbol. Return references.
-    std::unordered_set<Usr> seen;
+    robin_hood::unordered_set<Usr> seen;
     seen.insert(sym.usr);
     std::vector<Usr> stack{sym.usr};
     if (sym.kind != Kind::Func)

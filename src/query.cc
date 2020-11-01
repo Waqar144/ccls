@@ -15,8 +15,10 @@
 #include <optional>
 #include <stdint.h>
 #include <string>
-#include <unordered_map>
-#include <unordered_set>
+//#include <unordered_map>
+//#include <unordered_set>
+
+#include <robin_hood/robin_hood.h>
 
 namespace ccls {
 namespace {
@@ -35,7 +37,7 @@ void addRange(std::vector<T> &into, const std::vector<T> &from) {
 template <typename T>
 void removeRange(std::vector<T> &from, const std::vector<T> &to_remove) {
   if (to_remove.size()) {
-    std::unordered_set<T> to_remove_set(to_remove.begin(), to_remove.end());
+    robin_hood::unordered_set<T> to_remove_set(to_remove.begin(), to_remove.end());
     from.erase(
         std::remove_if(from.begin(), from.end(),
                        [&](const T &t) { return to_remove_set.count(t) > 0; }),
@@ -256,7 +258,7 @@ void DB::applyIndexUpdate(IndexUpdate *u) {
     addRange(entity.F, it.second.second);                                      \
   }
 
-  std::unordered_map<int, int> prev_lid2file_id, lid2file_id;
+  robin_hood::unordered_map<int, int> prev_lid2file_id, lid2file_id;
   for (auto &[lid, path] : u->prev_lid2path)
     prev_lid2file_id[lid] = getFileId(path);
   for (auto &[lid, path] : u->lid2path) {
@@ -269,7 +271,7 @@ void DB::applyIndexUpdate(IndexUpdate *u) {
   }
 
   // References (Use &use) in this function are important to update file_id.
-  auto ref = [&](std::unordered_map<int, int> &lid2fid, Usr usr, Kind kind,
+  auto ref = [&](robin_hood::unordered_map<int, int> &lid2fid, Usr usr, Kind kind,
                  Use &use, int delta) {
     use.file_id =
         use.file_id == -1 ? u->file_id : lid2fid.find(use.file_id)->second;
@@ -280,7 +282,7 @@ void DB::applyIndexUpdate(IndexUpdate *u) {
     if (!v)
       files[use.file_id].symbol2refcnt.erase(sym);
   };
-  auto refDecl = [&](std::unordered_map<int, int> &lid2fid, Usr usr, Kind kind,
+  auto refDecl = [&](robin_hood::unordered_map<int, int> &lid2fid, Usr usr, Kind kind,
                      DeclRef &dr, int delta) {
     dr.file_id =
         dr.file_id == -1 ? u->file_id : lid2fid.find(dr.file_id)->second;
@@ -619,7 +621,7 @@ std::vector<DeclRef> &getNonDefDeclarations(DB *db, SymbolIdx sym) {
 std::vector<Use> getUsesForAllBases(DB *db, QueryFunc &root) {
   std::vector<Use> ret;
   std::vector<QueryFunc *> stack{&root};
-  std::unordered_set<Usr> seen;
+  robin_hood::unordered_set<Usr> seen;
   seen.insert(root.usr);
   while (!stack.empty()) {
     QueryFunc &func = *stack.back();
@@ -641,7 +643,7 @@ std::vector<Use> getUsesForAllBases(DB *db, QueryFunc &root) {
 std::vector<Use> getUsesForAllDerived(DB *db, QueryFunc &root) {
   std::vector<Use> ret;
   std::vector<QueryFunc *> stack{&root};
-  std::unordered_set<Usr> seen;
+  robin_hood::unordered_set<Usr> seen;
   seen.insert(root.usr);
   while (!stack.empty()) {
     QueryFunc &func = *stack.back();

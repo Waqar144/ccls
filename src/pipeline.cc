@@ -106,7 +106,7 @@ struct InMemoryIndexFile {
   IndexFile index;
 };
 std::shared_mutex g_index_mutex;
-std::unordered_map<std::string, InMemoryIndexFile> g_index;
+robin_hood::unordered_map<std::string, InMemoryIndexFile> g_index;
 
 bool cacheInvalid(VFS *vfs, IndexFile *prev, const std::string &path,
                   const std::vector<const char *> &args,

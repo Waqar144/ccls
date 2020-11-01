@@ -236,7 +236,7 @@ void WorkingFile::onBufferContentUpdated() {
 // buffer. And then using them as start points to extend upwards and downwards
 // to align other identical lines (but not unique).
 void WorkingFile::computeLineMapping() {
-  std::unordered_map<uint64_t, int> hash_to_unique;
+  robin_hood::unordered_map<uint64_t, int> hash_to_unique;
   std::vector<uint64_t> index_hashes(index_lines.size());
   std::vector<uint64_t> buffer_hashes(buffer_lines.size());
   index_to_buffer.resize(index_lines.size());

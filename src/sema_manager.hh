@@ -149,7 +149,7 @@ struct SemaManager {
   LruCache<std::string, ccls::Session> sessions;
 
   std::mutex diag_mutex;
-  std::unordered_map<std::string, int64_t> next_diag;
+  robin_hood::unordered_map<std::string, int64_t> next_diag;
 
   ThreadedQueue<std::unique_ptr<CompTask>> comp_tasks;
   ThreadedQueue<DiagTask> diag_tasks;

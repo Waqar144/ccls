@@ -103,7 +103,7 @@ void MessageHandler::textDocument_codeLens(TextDocumentParam &param,
     code_lens.command->arguments.push_back(toString(show));
   };
 
-  std::unordered_set<Range> seen;
+  robin_hood::unordered_set<Range> seen;
   for (auto [sym, refcnt] : file->symbol2refcnt) {
     if (refcnt <= 0 || !sym.extent.valid() || !seen.insert(sym.range).second)
       continue;

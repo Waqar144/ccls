@@ -70,7 +70,7 @@ enum OptionClass {
 
 struct ProjectProcessor {
   Project::Folder &folder;
-  std::unordered_set<size_t> command_set;
+  robin_hood::unordered_set<size_t> command_set;
   StringSet<> exclude_args;
   std::vector<GlobPattern> exclude_globs;
 

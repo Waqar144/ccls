@@ -64,7 +64,7 @@ template <typename Q, typename QDef> struct QueryEntity {
 
 template <typename T>
 using Update =
-    std::unordered_map<Usr, std::pair<std::vector<T>, std::vector<T>>>;
+    robin_hood::unordered_map<Usr, std::pair<std::vector<T>, std::vector<T>>>;
 
 struct QueryFunc : QueryEntity<QueryFunc, FuncDef<Vec>> {
   Usr usr;
@@ -139,7 +139,7 @@ struct DenseMapInfoForUsr {
   static bool isEqual(Usr l, Usr r) { return l == r; }
 };
 
-using Lid2file_id = std::unordered_map<int, int>;
+using Lid2file_id = robin_hood::unordered_map<int, int>;
 
 // The query database is heavily optimized for fast queries. It is stored
 // in-memory.

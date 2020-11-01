@@ -6,8 +6,6 @@
 #include "pipeline.hh"
 #include "query.hh"
 
-#include <unordered_set>
-
 namespace ccls {
 namespace {
 struct Param : TextDocumentPositionParam {
@@ -62,7 +60,7 @@ bool expandHelper(MessageHandler *m, Out_cclsInheritance *entry, bool derived,
     entry->numChildren = 0;
     return false;
   }
-  std::unordered_set<Usr> seen;
+  robin_hood::unordered_set<Usr> seen;
   if (derived) {
     if (levels > 0) {
       for (auto usr : entity.derived) {

@@ -21,7 +21,9 @@
 #include <functional>
 #include <regex>
 #include <string.h>
-#include <unordered_map>
+//#include <unordered_map>
+
+#include "xxHash/xxhash.h"
 
 using namespace llvm;
 
@@ -83,16 +85,18 @@ bool GroupMatch::matches(const std::string &text,
 }
 
 uint64_t hashUsr(llvm::StringRef s) {
-  union {
-    uint64_t ret;
-    uint8_t out[8];
-  };
+//  union {
+//    uint64_t ret;
+//    uint8_t out[8];
+//  };
   // k is an arbitrary key. Don't change it.
-  const uint8_t k[16] = {0xd0, 0xe5, 0x4d, 0x61, 0x74, 0x63, 0x68, 0x52,
-                         0x61, 0x79, 0xea, 0x70, 0xca, 0x70, 0xf0, 0x0d};
-  (void)siphash(reinterpret_cast<const uint8_t *>(s.data()), s.size(), k, out,
-                8);
-  return ret;
+//  const uint8_t k[16] = {0xd0, 0xe5, 0x4d, 0x61, 0x74, 0x63, 0x68, 0x52,
+//                         0x61, 0x79, 0xea, 0x70, 0xca, 0x70, 0xf0, 0x0d};
+//  (void)siphash(reinterpret_cast<const uint8_t *>(s.data()), s.size(), k, out,
+//                8);
+    const uint64_t seed = 0xd0e54d6174636852;
+    return XXH64((const void*)s.data(), s.size(), seed);
+//  return ret;
 }
 
 std::string lowerPathIfInsensitive(const std::string &path) {

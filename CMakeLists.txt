@@ -190,7 +190,9 @@ install(TARGETS ccls RUNTIME DESTINATION bin)
 
 ### Sources
 
-target_sources(ccls PRIVATE third_party/siphash.cc)
+add_compile_definitions(XXH_INLINE_ALL)
+
+#target_sources(ccls PRIVATE third_party/siphash.cc)
 
 target_sources(ccls PRIVATE
   src/clang_tu.cc
@@ -236,6 +238,7 @@ target_sources(ccls PRIVATE
   src/messages/textDocument_references.cc
   src/messages/textDocument_rename.cc
   src/messages/textDocument_signatureHelp.cc
+#  src/messages/textDocument_headersourceswitch.cc
   src/messages/workspace.cc
 )
 

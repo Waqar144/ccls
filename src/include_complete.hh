@@ -37,10 +37,10 @@ struct IncludeComplete {
 
   // Absolute file path to the completion item in |completion_items|.
   // Keep the one with shortest include path.
-  std::unordered_map<std::string, int> absolute_path_to_completion_item;
+  robin_hood::unordered_map<std::string, int> absolute_path_to_completion_item;
 
   // Only one completion item per include path.
-  std::unordered_map<std::string, int> inserted_paths;
+  robin_hood::unordered_map<std::string, int> inserted_paths;
 
   // Cached references
   Project *project_;

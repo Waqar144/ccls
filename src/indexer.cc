@@ -41,14 +41,14 @@ struct File {
 };
 
 struct IndexParam {
-  std::unordered_map<FileID, File> uid2file;
-  std::unordered_map<FileID, bool> uid2multi;
+    robin_hood::unordered_map<FileID, File> uid2file;
+    robin_hood::unordered_map<FileID, bool> uid2multi;
   struct DeclInfo {
     Usr usr;
     std::string short_name;
     std::string qualified;
   };
-  std::unordered_map<const Decl *, DeclInfo> decl2Info;
+  robin_hood::unordered_map<const Decl *, DeclInfo> decl2Info;
 
   VFS &vfs;
   ASTContext *ctx;
@@ -1249,7 +1249,10 @@ std::string IndexFile::toString() {
 }
 
 template <typename T> void uniquify(std::vector<T> &a) {
-  std::unordered_set<T> seen;
+//  std::unordered_set<T> seen;
+//  robin_hood::unordered_set<T> seen;
+  robin_hood::unordered_flat_set<T> seen;
+  seen.reserve(a.size() / 2);
   size_t n = 0;
   for (size_t i = 0; i < a.size(); i++)
     if (seen.insert(a[i]).second)

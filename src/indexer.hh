@@ -12,10 +12,11 @@
 #include <clang/Basic/Specifiers.h>
 #include <llvm/ADT/CachedHashString.h>
 #include <llvm/ADT/DenseMap.h>
+#include <robin_hood/robin_hood.h>
 
 #include <stdint.h>
 #include <string_view>
-#include <unordered_map>
+//#include <unordered_map>
 #include <vector>
 
 namespace std {
@@ -290,7 +291,7 @@ struct IndexFile {
   bool no_linkage;
 
   // uid2lid_and_path is used to generate lid2path, but not serialized.
-  std::unordered_map<clang::FileID, std::pair<int, std::string>>
+  robin_hood::unordered_map<clang::FileID, std::pair<int, std::string>>
       uid2lid_and_path;
   std::vector<std::pair<int, std::string>> lid2path;
 
@@ -305,9 +306,9 @@ struct IndexFile {
 
   std::vector<IndexInclude> includes;
   llvm::DenseMap<llvm::CachedHashStringRef, int64_t> dependencies;
-  std::unordered_map<Usr, IndexFunc> usr2func;
-  std::unordered_map<Usr, IndexType> usr2type;
-  std::unordered_map<Usr, IndexVar> usr2var;
+  robin_hood::unordered_map<Usr, IndexFunc> usr2func;
+  robin_hood::unordered_map<Usr, IndexType> usr2type;
+  robin_hood::unordered_map<Usr, IndexVar> usr2var;
 
   // File contents at the time of index. Not serialized.
   std::string file_contents;
