@@ -87,6 +87,15 @@ public:
   // Returns the number of elements in the queue. This is lock-free.
   size_t size() const { return total_count_; }
 
+  void pushBackLF(T&& t, bool priority)
+  {
+      if (priority)
+        priority_.push_back(std::move(t));
+      else
+        queue_.push_back(std::move(t));
+      ++total_count_;
+  }
+
   // Add an element to the queue.
   template <void (std::deque<T>::*Push)(T &&)> void push(T &&t, bool priority) {
     std::lock_guard<std::mutex> lock(mutex_);

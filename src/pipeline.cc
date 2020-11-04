@@ -806,7 +806,7 @@ void index(const std::string &path, const std::vector<const char *> &args,
            IndexMode mode, bool must_exist, RequestId id) {
   if (!path.empty())
     stats.enqueued++;
-  index_request->pushBack({path, args, mode, must_exist, std::move(id)},
+  index_request->pushBackLF({path, args, mode, must_exist, std::move(id)},
                           mode != IndexMode::Background);
 }
 

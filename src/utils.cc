@@ -24,6 +24,7 @@
 //#include <unordered_map>
 
 #include "xxHash/xxhash.h"
+#include "xxHash/xxh3.h"
 
 using namespace llvm;
 
@@ -95,7 +96,8 @@ uint64_t hashUsr(llvm::StringRef s) {
 //  (void)siphash(reinterpret_cast<const uint8_t *>(s.data()), s.size(), k, out,
 //                8);
     const uint64_t seed = 0xd0e54d6174636852;
-    return XXH64((const void*)s.data(), s.size(), seed);
+//    return XXH64((const void*)s.data(), s.size(), seed);
+    return XXH3_64bits_withSeed((const void*)s.data(), s.size(), seed);
 //  return ret;
 }
 

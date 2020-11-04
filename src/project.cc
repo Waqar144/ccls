@@ -23,6 +23,7 @@
 #include <llvm/Support/Program.h>
 
 #include <rapidjson/writer.h>
+#include <execution>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -610,30 +611,31 @@ void Project::index(WorkingFiles *wfiles, const RequestId &id) {
   std::vector<const char *> args, extra_args;
   for (const std::string &arg : g_config->clang.extraArgs)
     extra_args.push_back(intern(arg));
-  {
-    std::lock_guard lock(mtx);
-    for (auto &[root, folder] : root2folder) {
-      int i = 0;
-      for (const Project::Entry &entry : folder.entries) {
-        std::string reason;
-        if (match.matches(entry.filename, &reason) &&
-            match_i.matches(entry.filename, &reason)) {
-          bool interactive = wfiles->getFile(entry.filename) != nullptr;
-          args = entry.args;
-          args.insert(args.end(), extra_args.begin(), extra_args.end());
-          args.push_back(intern("-working-directory=" + entry.directory));
-          pipeline::index(entry.filename, args,
-                          interactive ? IndexMode::Normal
-                                      : IndexMode::Background,
-                          false, id);
-        } else {
-          LOG_V(1) << "[" << i << "/" << folder.entries.size()
-                   << "]: " << reason << "; skip " << entry.filename;
-        }
-        i++;
-      }
-    }
-  }
+
+      std::for_each(std::execution::par, root2folder.begin(), root2folder.end(),
+                    [&match, &match_i, wfiles, &args, &extra_args, &id]
+                    (robin_hood::pair<const std::string, Folder> pair) {
+          auto& folder = pair.second;
+          int i = 0;
+          for (const Project::Entry &entry : folder.entries) {
+            std::string reason;
+            if (match.matches(entry.filename, &reason) &&
+                match_i.matches(entry.filename, &reason)) {
+              bool interactive = wfiles->getFile(entry.filename) != nullptr;
+              args = entry.args;
+              args.insert(args.end(), extra_args.begin(), extra_args.end());
+              args.push_back(intern("-working-directory=" + entry.directory));
+              pipeline::index(entry.filename, args,
+                              interactive ? IndexMode::Normal
+                                          : IndexMode::Background,
+                              false, id);
+            } else {
+              LOG_V(1) << "[" << i << "/" << folder.entries.size()
+                       << "]: " << reason << "; skip " << entry.filename;
+            }
+            i++;
+          }
+      });
 
   pipeline::loaded_ts = pipeline::tick;
   // Dummy request to indicate that project is loaded and
